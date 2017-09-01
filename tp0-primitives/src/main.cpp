@@ -246,9 +246,7 @@ void FenetreTP::afficherScene()
       glVertex3fv(p4);
       glVertex3fv(p3);
       glVertex3fv(p2);
-//      glVertex3fv(p2);
       glVertex3fv(p1);
-//      glVertex3fv(p1);
       glVertex3fv(p7);
 		glVertex3fv(p6);
 		glVertex3fv(p5);
