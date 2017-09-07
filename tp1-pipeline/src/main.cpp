@@ -384,10 +384,6 @@ void afficherBestiole()
 
 
 
-      // déplacer le repègre, informer la carte graphique, tracer la seconde patte
-      // ...
-      // déplacer le repère, informer la carte graphique, tracer ...
-      // etc.
 
    }matrModel.PopMatrix(); // revenir à la transformation sauvegardée
    glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel ); // informer ...
@@ -406,7 +402,20 @@ void definirCamera()
    else
    {
       matrVisu.LoadIdentity( );
-      // matrVisu.Translate(), matrVisu.Rotate(), ...
+      // matrVisu.Translate(), matrVisu.Rotate(), ....
+
+//      matrVisu.Translate(
+//            -distCam*cos(glm::radians(thetaCam))*sin(glm::radians(phiCam)),
+//            -distCam*sin(glm::radians(thetaCam))*sin(glm::radians(phiCam)),
+//            -distCam*cos(glm::radians(phiCam))
+//       );
+
+      matrVisu.Translate(-distCam, 0, 0);
+      matrVisu.Rotate(phiCam,1.0,0.0,0.0);
+      matrVisu.Rotate(-thetaCam,0.0,0.0,0.1);
+      //matrVisu.Translate(0,0,0);
+
+
    }
 }
 
