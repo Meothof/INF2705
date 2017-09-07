@@ -1,0 +1,8 @@
+Q1: Supposons que les coordonnées du modèle soient exprimées dans un système
+    de coordonnées « main gauche » (au lieu du l'habituel « main droite »).
+    Comment devrait-on alors modifier les matrices 4x4 servant à la rotation
+    afin de préserver le même effet visuel d'une rotation positive?
+
+Q2: Dans ce TP, il serait logique que la tête de la bestiole soit toujours
+    dirigée dans le sens de son mouvement.  Décrivez (avec assez de détails)
+    comment vous implanteriez ceci dans ce TP.
