@@ -279,25 +279,32 @@ void afficherBestiole()
 
       // ajouter une ou des transformations afin de tracer le corps à la position courante "positionBestiole[]",
       // avec l'angle de rotation "angleBestiole" et de la taille "tailleCorps"
-//		matrModel.Scale( tailleCorps, tailleCorps, tailleCorps );
-//		matrModel.Rotate( 0.0, angleBestiole, 0.0, 0 );
+
+		matrModel.Rotate( angleBestiole, 0, 0, 1 );
 		matrModel.Translate(positionBestiole[0],positionBestiole[1],positionBestiole[2]);
 		
       // ...
       matrModel.PushMatrix();{
+
          // ...
          // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
-         glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+
 
          // afficher le corps à la position courante
          switch ( modele )
          {
          default:
          case 1: // une bestiole (très carrée et plutôt extraterrestre)
-            afficherCube();
+            matrModel.PushMatrix();{
+                matrModel.Scale(tailleCorps, tailleCorps,tailleCorps);
+                glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+                afficherCube();
+            }matrModel.PopMatrix();
+
+
             matrModel.PushMatrix();{
                // tracer la tête à la bonne position
-               matrModel.Translate( 0.5, 0.0, 0.6 ); // (bidon) À MODIFIER
+               matrModel.Translate( 0.5*tailleCorps, 0.0, 0.5*tailleCorps); // (bidon) À MODIFIER
                glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
                // donner la couleur de la tête
                glVertexAttrib3f( locColor, 1.0, 0.0, 1.0 ); // équivalent au glColor() de OpenGL 2.x
@@ -321,20 +328,43 @@ void afficherBestiole()
 
       // ajouter une ou des transformations afin de tracer les pattes de largeur "largPatte" et longueur "longPatte"
       // ...
-		matrModel.Scale(largPatte, longPatte, largPatte);
-      matrModel.Translate( -0.5, -0.5, -0.5 ); // (bidon) À MODIFIER
 
-      // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
-      glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+	  matrModel.PushMatrix();{
+        matrModel.Rotate(45,0,1,0);
+        matrModel.Scale(largPatte, longPatte, largPatte);
+        // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
+        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+        afficherCube();
+      }matrModel.PopMatrix();
 
-      // afficher les quatre pattes
-      // afficher la première patte
-      afficherCube();
-		
-		matrModel.Scale(largPatte, longPatte, largPatte);
-      matrModel.Translate( 2.0, 0.0, 0.0 );
-      glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
-      afficherCube();
+      matrModel.PushMatrix();{
+        matrModel.Rotate(-45,0,0,1);
+        matrModel.Scale(largPatte, longPatte, largPatte);
+        //matrModel.Translate( 4, -1, -4 ); // (bidon) À MODIFIER
+        // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
+        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+        afficherCube();
+      }matrModel.PopMatrix();
+
+      matrModel.PushMatrix();{
+        matrModel.Rotate(45,0,0,1);
+        matrModel.Scale(largPatte, longPatte, largPatte);
+        //matrModel.Translate( 4, 1, -4 ); // (bidon) À MODIFIER
+
+        // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
+        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+        afficherCube();
+      }matrModel.PopMatrix();
+      matrModel.PushMatrix();{
+        matrModel.Rotate(-45,0,0,1);
+        matrModel.Scale(largPatte, longPatte, largPatte);
+        //matrModel.Translate( -4, 1, -4 ); // (bidon) À MODIFIER
+
+        // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
+        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+        afficherCube();
+      }matrModel.PopMatrix();
+
 
       // déplacer le repère, informer la carte graphique, tracer la seconde patte
       // ...
