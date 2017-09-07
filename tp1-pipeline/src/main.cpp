@@ -272,13 +272,17 @@ void afficherBestiole()
    matrModel.PushMatrix();{ // sauvegarder la tranformation courante
 
       // (partie 1) MODIFICATIONS ICI ...
-
+	
+		
       // donner la couleur du corps
       glVertexAttrib3f( locColor, 0.0, 1.0, 0.0 ); // équivalent au glColor() de OpenGL 2.x
 
       // ajouter une ou des transformations afin de tracer le corps à la position courante "positionBestiole[]",
       // avec l'angle de rotation "angleBestiole" et de la taille "tailleCorps"
-
+//		matrModel.Scale( tailleCorps, tailleCorps, tailleCorps );
+//		matrModel.Rotate( 0.0, angleBestiole, 0.0, 0 );
+		matrModel.Translate(positionBestiole[0],positionBestiole[1],positionBestiole[2]);
+		
       // ...
       matrModel.PushMatrix();{
          // ...
@@ -293,7 +297,7 @@ void afficherBestiole()
             afficherCube();
             matrModel.PushMatrix();{
                // tracer la tête à la bonne position
-               matrModel.Translate( -2.0, 0.0, 0.0 ); // (bidon) À MODIFIER
+               matrModel.Translate( 0.5, 0.0, 0.6 ); // (bidon) À MODIFIER
                glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
                // donner la couleur de la tête
                glVertexAttrib3f( locColor, 1.0, 0.0, 1.0 ); // équivalent au glColor() de OpenGL 2.x
@@ -317,13 +321,19 @@ void afficherBestiole()
 
       // ajouter une ou des transformations afin de tracer les pattes de largeur "largPatte" et longueur "longPatte"
       // ...
-      matrModel.Translate( 2.0, 0.0, 0.0 ); // (bidon) À MODIFIER
+		matrModel.Scale(largPatte, longPatte, largPatte);
+      matrModel.Translate( -0.5, -0.5, -0.5 ); // (bidon) À MODIFIER
 
       // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
       glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
 
       // afficher les quatre pattes
       // afficher la première patte
+      afficherCube();
+		
+		matrModel.Scale(largPatte, longPatte, largPatte);
+      matrModel.Translate( 2.0, 0.0, 0.0 );
+      glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
       afficherCube();
 
       // déplacer le repère, informer la carte graphique, tracer la seconde patte
