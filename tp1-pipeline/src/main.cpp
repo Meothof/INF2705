@@ -329,44 +329,62 @@ void afficherBestiole()
       // ajouter une ou des transformations afin de tracer les pattes de largeur "largPatte" et longueur "longPatte"
       // ...
 
-	  matrModel.PushMatrix();{
-        matrModel.Rotate(45,0,1,0);
-        matrModel.Scale(largPatte, longPatte, largPatte);
-        // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
-        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
-        afficherCube();
+      matrModel.PushMatrix();{
+        matrModel.Translate(-tailleCorps/2,-tailleCorps/2,-tailleCorps/2);
+          matrModel.Rotate(-45,0,0,1);
+      	  matrModel.PushMatrix();{
+
+              matrModel.Rotate(anglePatte,1,0,0);
+              matrModel.Scale(largPatte, longPatte, largPatte);
+              matrModel.Translate(-largPatte/2,-longPatte/2,-largPatte/2);
+              // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
+              glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+              afficherCube();
+            }matrModel.PopMatrix();
       }matrModel.PopMatrix();
 
       matrModel.PushMatrix();{
-        matrModel.Rotate(-45,0,0,1);
-        matrModel.Scale(largPatte, longPatte, largPatte);
-        //matrModel.Translate( 4, -1, -4 ); // (bidon) À MODIFIER
-        // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
-        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
-        afficherCube();
-      }matrModel.PopMatrix();
-
-      matrModel.PushMatrix();{
+        matrModel.Translate(tailleCorps/2,-tailleCorps/2,-tailleCorps/2);
         matrModel.Rotate(45,0,0,1);
-        matrModel.Scale(largPatte, longPatte, largPatte);
-        //matrModel.Translate( 4, 1, -4 ); // (bidon) À MODIFIER
-
-        // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
-        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
-        afficherCube();
+        matrModel.PushMatrix();{
+            matrModel.Rotate(anglePatte,1,0,0);
+            matrModel.Scale(largPatte, longPatte, largPatte);
+            matrModel.Translate(largPatte/2,-longPatte/2,-largPatte/2);
+            // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
+            glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+            afficherCube();
+        }matrModel.PopMatrix();
       }matrModel.PopMatrix();
+
       matrModel.PushMatrix();{
-        matrModel.Rotate(-45,0,0,1);
-        matrModel.Scale(largPatte, longPatte, largPatte);
-        //matrModel.Translate( -4, 1, -4 ); // (bidon) À MODIFIER
+              matrModel.Translate(tailleCorps/2,tailleCorps/2,-tailleCorps/2);
+              matrModel.Rotate(-45,0,0,1);
+              matrModel.PushMatrix();{
+                  matrModel.Rotate(-anglePatte,1,0,0);
+                  matrModel.Scale(largPatte, longPatte, largPatte);
+                  matrModel.Translate(largPatte/2,longPatte/2,-largPatte/2);
+                  // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
+                  glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+                  afficherCube();
+              }matrModel.PopMatrix();
+            }matrModel.PopMatrix();
 
-        // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
-        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
-        afficherCube();
-      }matrModel.PopMatrix();
+       matrModel.PushMatrix();{
+                     matrModel.Translate(-tailleCorps/2,tailleCorps/2,-tailleCorps/2);
+                     matrModel.Rotate(45,0,0,1);
+                     matrModel.PushMatrix();{
+                         matrModel.Rotate(-anglePatte,1,0,0);
+                         matrModel.Scale(largPatte, longPatte, largPatte);
+                         matrModel.Translate(-largPatte/2,longPatte/2,-largPatte/2);
+                         // ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
+                         glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+                         afficherCube();
+                     }matrModel.PopMatrix();
+                   }matrModel.PopMatrix();
 
 
-      // déplacer le repère, informer la carte graphique, tracer la seconde patte
+
+      // déplacer le repègre, informer la carte graphique, tracer la seconde patte
       // ...
       // déplacer le repère, informer la carte graphique, tracer ...
       // etc.

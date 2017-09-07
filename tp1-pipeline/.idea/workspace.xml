@@ -15,8 +15,8 @@
       <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="449">
-              <caret line="306" column="73" lean-forward="false" selection-start-line="306" selection-start-column="73" selection-end-line="306" selection-end-column="73" />
+            <state relative-caret-position="1537">
+              <caret line="371" column="31" lean-forward="true" selection-start-line="371" selection-start-column="31" selection-end-line="371" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -391,8 +391,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="449">
-          <caret line="306" column="73" lean-forward="false" selection-start-line="306" selection-start-column="73" selection-end-line="306" selection-end-column="73" />
+        <state relative-caret-position="1537">
+          <caret line="371" column="31" lean-forward="true" selection-start-line="371" selection-start-column="31" selection-end-line="371" selection-end-column="31" />
           <folding />
         </state>
       </provider>
