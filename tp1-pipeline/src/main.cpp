@@ -214,15 +214,23 @@ void initialiser()
 
 	// initialiser le second VAO (théière)
 	glBindVertexArray( vao[1] );
-
 	// (partie 2) MODIFICATIONS ICI ...
 	// créer le VBO pour les sommets
-	// ...
-
+	glGenBuffers( 1, &vboTheiere );
+	glBindBuffer(GL_ARRAY_BUFFER, vboTheiere);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(gTeapotSommets), gTeapotSommets, GL_STATIC_DRAW);
+	glVertexAttribPointer( locVertex, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+   glEnableVertexAttribArray(locVertex);
 	// créer le VBO la connectivité
-	// ...
+	glGenBuffers( 1, &vboConnec );
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboConnec);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(gTeapotConnec), gTeapotConnec, GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 
 	// créer quelques autres formes
 	glUseProgram( progBase );
@@ -257,14 +265,21 @@ void afficherSphere( )
 // (partie 2) Vous modifierez cette fonction pour utiliser les VBOs
 void afficherTheiere()
 {
-	glBindVertexArray( vao[1] );
+	
 	// (partie 2) MODIFICATIONS ICI ...
+	matrModel.PushMatrix();{
+		glBindVertexArray( vao[1] );
+      glDrawElements( GL_TRIANGLES, 530*4, GL_UNSIGNED_INT, 0);
+      glBindVertexArray( 0 );              // dÃ©sÃ©lectionner le VAO
+   }matrModel.PopMatrix();
+	
+	
 	// vous pouvez utiliser temporairement cette fonction pour la première partie du TP, mais vous ferez mieux dans la seconde partie du TP
-	glBegin( GL_TRIANGLES );
-	for ( unsigned int i = 0 ; i < sizeof(gTeapotConnec)/sizeof(GLuint) ; i++ )
-		glVertex3fv( &(gTeapotSommets[3*gTeapotConnec[i]] ) );
-	glEnd( );
-	glBindVertexArray(0);
+//	glBegin( GL_TRIANGLES );
+//	for ( unsigned int i = 0 ; i < sizeof(gTeapotConnec)/sizeof(GLuint) ; i++ )
+//		glVertex3fv( &(gTeapotSommets[3*gTeapotConnec[i]] ) );
+//	glEnd( );
+//	glBindVertexArray(0);
 }
 
 void afficherBestiole()
