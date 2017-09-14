@@ -1,7 +1,7 @@
 // Prénoms, noms et matricule des membres de l'équipe:
 // - Théo Moffelein (1918945)
-// - Thibault Noilly (matricule2)
-#warning "Écrire les prénoms, noms et matricule des membres de l'équipe dans le fichier et commenter cette ligne"
+// - Thibault Noilly (1919676)
+// #warning "Écrire les prénoms, noms et matricule des membres de l'équipe dans le fichier et commenter cette ligne"
 
 #include <iostream>
 #include "inf2705.h"
@@ -82,12 +82,16 @@ void calculerPhysique( )
 		static int sens[5] = { +1, +1, +1, +1, +1 };
 		// mouvement en X
 		if ( positionBestiole[0]-0.5*tailleCorps <= -0.5*dimBoite ) sens[0] = +1.0;
+
 		else if ( positionBestiole[0]+0.5*tailleCorps >= 0.5*dimBoite ) sens[0] = -1.0;
 		positionBestiole[0] += 0.03 * sens[0];
+
 		// mouvement en Y
 		if ( positionBestiole[1]-0.5*tailleCorps <= -0.5*dimBoite ) sens[1] = +1.0;
-		else if ( positionBestiole[1]+0.5*tailleCorps >= 0.5*dimBoite ) sens[1] = -1.0;
+
+		else if ( positionBestiole[1]+0.5*tailleCorps >= 0.5*dimBoite) sens[1] = -1.0;
 		positionBestiole[1] += 0.02 * sens[1];
+
 		// mouvement en Z
 		if ( positionBestiole[2]-0.5*tailleCorps <= 0.0 ) sens[2] = +1.0;
 		else if ( positionBestiole[2]+0.5*tailleCorps >= dimBoite ) sens[2] = -1.0;
@@ -104,8 +108,10 @@ void calculerPhysique( )
 		tailleCorps += 0.01 * sens[4];
 
 		// rotation du corps
-		if ( angleBestiole > 360.0 ) angleBestiole -= 360.0;
-		angleBestiole += 0.5;
+//		if ( angleBestiole > 360.0 ) angleBestiole -= 360.0;
+//		angleBestiole += 0.5;
+        float pi = glm::pi<float>();
+		angleBestiole = (glm::atan(0.02 * sens[1], 0.03 * sens[0])) * 360 / (2.0*pi);
 	}
 }
 
@@ -220,7 +226,7 @@ void initialiser()
 	glBindBuffer(GL_ARRAY_BUFFER, vboTheiere);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(gTeapotSommets), gTeapotSommets, GL_STATIC_DRAW);
 	glVertexAttribPointer( locVertex, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-   glEnableVertexAttribArray(locVertex);
+	glEnableVertexAttribArray(locVertex);
 	// créer le VBO la connectivité
 	glGenBuffers( 1, &vboConnec );
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboConnec);
@@ -229,7 +235,7 @@ void initialiser()
 	glBindVertexArray(0);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
 	// créer quelques autres formes
@@ -267,11 +273,9 @@ void afficherTheiere()
 {
 	
 	// (partie 2) MODIFICATIONS ICI ...
-	matrModel.PushMatrix();{
-		glBindVertexArray( vao[1] );
-      glDrawElements( GL_TRIANGLES, 530*4, GL_UNSIGNED_INT, 0);
-      glBindVertexArray( 0 );              // dÃ©sÃ©lectionner le VAO
-   }matrModel.PopMatrix();
+    glBindVertexArray( vao[1] );
+    glDrawElements( GL_TRIANGLES, sizeof(gTeapotConnec), GL_UNSIGNED_INT, 0);
+    glBindVertexArray( 0 ); // désélectionner le VAO
 	
 	
 	// vous pouvez utiliser temporairement cette fonction pour la première partie du TP, mais vous ferez mieux dans la seconde partie du TP
@@ -315,7 +319,7 @@ void afficherBestiole()
 
 					matrModel.PushMatrix();{
 						// tracer la tête à la bonne position
-						matrModel.Translate( 0.5*tailleCorps, 0.0, 0.5*tailleCorps); // (bidon) À MODIFIER
+						matrModel.Translate( 0.5*tailleCorps, 0.0, 0.5*tailleCorps);
 						glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
 						// donner la couleur de la tête
 						glVertexAttrib3f( locColor, 1.0, 0.0, 1.0 ); // équivalent au glColor() de OpenGL 2.x
@@ -324,10 +328,13 @@ void afficherBestiole()
 					break;
 				case 2: // une théière
 					matrModel.PushMatrix();{
+						
+						//Inclinaison de la theiere
+						matrModel.Rotate(positionBestiole[2]*90/dimBoite,0,1,0);
+						matrModel.Scale( tailleCorps, tailleCorps, tailleCorps );
 						matrModel.Scale( 0.25, 0.25, 0.25 );
 						matrModel.Rotate( 90, 1, 0, 0 );
 						matrModel.Translate( 0, -2, 0 );
-	                    matrModel.Rotate(-(positionBestiole[2])*90/10, 0, 0, 1);
 						glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
 						afficherTheiere();
 					}matrModel.PopMatrix(); glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
@@ -341,6 +348,7 @@ void afficherBestiole()
 		// ajouter une ou des transformations afin de tracer les pattes de largeur "largPatte" et longueur "longPatte"
 		// ...
 
+        // Patte Arrière droite
 		matrModel.PushMatrix();{
 			matrModel.Translate(-tailleCorps/2,-tailleCorps/2,-tailleCorps/2);
 			matrModel.Rotate(-45,0,0,1);
@@ -348,12 +356,12 @@ void afficherBestiole()
 				matrModel.Rotate(anglePatte,1,0,0);
 				matrModel.Scale(largPatte, longPatte, largPatte);
 				matrModel.Translate(-largPatte/2,-longPatte/2,-largPatte/2);
-				// ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
 				glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
 				afficherCube();
 			}matrModel.PopMatrix();
 		}matrModel.PopMatrix();
 
+        // Patte Avant droite
 		matrModel.PushMatrix();{
 			matrModel.Translate(tailleCorps/2,-tailleCorps/2,-tailleCorps/2);
 			matrModel.Rotate(45,0,0,1);
@@ -361,12 +369,12 @@ void afficherBestiole()
 				matrModel.Rotate(anglePatte,1,0,0);
 				matrModel.Scale(largPatte, longPatte, largPatte);
 				matrModel.Translate(largPatte/2,-longPatte/2,-largPatte/2);
-				// ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
 				glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
 				afficherCube();
 			}matrModel.PopMatrix();
 		}matrModel.PopMatrix();
 
+        // Patte Avant gauche
 		matrModel.PushMatrix();{
 			matrModel.Translate(tailleCorps/2,tailleCorps/2,-tailleCorps/2);
 			matrModel.Rotate(-45,0,0,1);
@@ -374,12 +382,12 @@ void afficherBestiole()
 				matrModel.Rotate(-anglePatte,1,0,0);
 				matrModel.Scale(largPatte, longPatte, largPatte);
 				matrModel.Translate(largPatte/2,longPatte/2,-largPatte/2);
-				// ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
 				glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
 				afficherCube();
 			}matrModel.PopMatrix();
 		}matrModel.PopMatrix();
 
+        // Patte Arrière gauche
 		matrModel.PushMatrix();{
 			matrModel.Translate(-tailleCorps/2,tailleCorps/2,-tailleCorps/2);
 			matrModel.Rotate(45,0,0,1);
@@ -387,7 +395,6 @@ void afficherBestiole()
 				matrModel.Rotate(-anglePatte,1,0,0);
 				matrModel.Scale(largPatte, longPatte, largPatte);
 				matrModel.Translate(-largPatte/2,longPatte/2,-largPatte/2);
-				// ==> Avant de tracer, on doit informer la carte graphique des changements faits à la matrice de modélisation
 				glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
 				afficherCube();
 			}matrModel.PopMatrix();
@@ -408,8 +415,7 @@ void definirCamera()
 	}
 	else
 	{
-		
-		// matrVisu.Translate(), matrVisu.Rotate(), ....
+		// Camera alternative fonctionnelle
 		matrVisu.LoadIdentity( );
 		matrVisu.Rotate(-phiCam,1,0,0);
 		matrVisu.Rotate(90-thetaCam,0,0,1);
@@ -419,7 +425,6 @@ void definirCamera()
 				-5-distCam*cos(glm::radians(phiCam))
 		 );
 		matrVisu.Rotate(180,0,0,1);
-
 	}
 }
 

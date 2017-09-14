@@ -3,6 +3,32 @@ Q1: Supposons que les coordonnées du modèle soient exprimées dans un système
     Comment devrait-on alors modifier les matrices 4x4 servant à la rotation
     afin de préserver le même effet visuel d'une rotation positive?
 
-Q2: Dans ce TP, il serait logique que la tête de la bestiole soit toujours
-    dirigée dans le sens de son mouvement.  Décrivez (avec assez de détails)
-    comment vous implanteriez ceci dans ce TP.
+R1: Pour conserver une rotation positive, il suffit de remplacer les angles
+    de rotation par leur opposé dans les sinus et cosinus. Les cosinus restent
+    inchangés, les sinus changent de signe.
+    Pour une matrice de transformation 4x4 de cette forme :
+    | a b c l |
+    | d e f m |
+    | g h i n |
+    | 0 0 0 1 |
+	il suffit de prendre l'opposé des indices d, g, h et b, c, f.
+
+
+Q2: Dans ce TP, on peut déplacer la bestiole avec les flèches du clavier ou
+    encore lancer un déplacement « automatique » avec la touche 'espace'.
+    La bestiole se déplace alors dans différentes directions, entre en
+    collision avec les parois du cube qui la contient et son mouvement (son
+    déplacement) change alors de direction.
+
+    Lorsque la bestiole se déplace ainsi, comment peut-on toujours montrer
+    la bestiole se déplaçant en regardant vers l'avant, c'est-à-dire dans le
+    sens de son mouvement. Comment faire en sorte que la tête (et le corps)
+    soit toujours dirigée dans le sens de son mouvement?
+    Décrivez (avec assez de détails) comment vous implanteriez ceci dans ce TP.
+
+R2:	La direction de la bestiole est calculée à partir du vecteur (0.03, 0.02, 0.05)
+	aux signes près de chaque composante. On cherche l'angle formé entre les 2
+	premières composantes. On calcule l'arctangente du rapport entre les 2 : 0.02/0.03.
+	Le résultat est l'angle en radian qu'il suffit de convertir en degré.
+	Nous avons implementé cette rotation, cf. ligne 113-114 de main.cpp.
+
