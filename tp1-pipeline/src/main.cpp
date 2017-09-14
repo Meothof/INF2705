@@ -325,6 +325,9 @@ void afficherBestiole()
 				case 2: // une théière
 					matrModel.PushMatrix();{
 						matrModel.Scale( 0.25, 0.25, 0.25 );
+						
+						//Inclinaison de la theiere
+						matrModel.Rotate(9*positionBestiole[2],0,1,0);
 						matrModel.Rotate( 90, 1, 0, 0 );
 						matrModel.Translate( 0, -2, 0 );
 						glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
