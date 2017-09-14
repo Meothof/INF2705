@@ -327,6 +327,7 @@ void afficherBestiole()
 						matrModel.Scale( 0.25, 0.25, 0.25 );
 						matrModel.Rotate( 90, 1, 0, 0 );
 						matrModel.Translate( 0, -2, 0 );
+	                    matrModel.Rotate(-(positionBestiole[2])*90/10, 0, 0, 1);
 						glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
 						afficherTheiere();
 					}matrModel.PopMatrix(); glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
