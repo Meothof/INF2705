@@ -5,6 +5,11 @@ Q1: Dans le nuanceur de sommets, si on souhaite calculer la profondeur du
 
     Pourquoi doit-on inverser le signe du résultat calculé ?
 
+	Dans le repère de la caméra, l'axe x est dirigé de gauche à droite,
+	l'axe y de bas en haut. L'axe z est donc orienté vers la caméra, les
+	profondeurs positives sont donc représentées derrière la caméra.
+	Les objets vus dans la scène ont une profondeur négative.
+
 
 Q2: Lorsqu'on calcule la distance à la caméra pour faire un effet de
     profondeur dans le nuanceur de fragments, que se passe-t-il si on
@@ -18,3 +23,9 @@ Q2: Lorsqu'on calcule la distance à la caméra pour faire un effet de
     « d = gl_FragCoord.w; » ?
 
     Comment expliquez-vous les comportements observés dans un cas ou l'autre?
+
+	Les objets représentés sont tous à z constant après la projection dans le
+	plan de la caméra, la coordonnée homogène w contient l'indication de profondeur
+	dans le plan de la caméra.
+	Pour obtenir la vraie profondeur dans l'espace qui doit être présenté, il
+	faut alors bien calculer z/w.
