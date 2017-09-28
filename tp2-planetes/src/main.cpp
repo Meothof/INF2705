@@ -65,6 +65,7 @@ GLfloat angleCoupe = 0.0; // angle (degres) autour de x
 class CorpsCeleste
 {
 	public:
+	static int corpsCount;
 	float rayon;          // le rayon
 	float distance;       // la distance au soleil
 	float rotation;       // l'angle actuel de rotation en degrés
@@ -72,6 +73,7 @@ class CorpsCeleste
 	float incrRotation;   // l'incrément à ajouter à chaque appel de la fonction calculerPhysique en degrés
 	float incrRevolution; // l'incrément à ajouter à chaque appel de la fonction calculerPhysique en degrés
 	glm::vec4 couleur;    // la couleur
+	glm::vec4 selCouleur;
 	bool estSelectionne;
 	CorpsCeleste( float r, float dist, float rot, float rev, float incrRot, float incrRev,
 					 glm::vec4 coul=glm::vec4(1.,1.,1.,1.) ) :
@@ -80,12 +82,16 @@ class CorpsCeleste
 	incrRotation(incrRot), incrRevolution(incrRev),
 	couleur(coul),
 	estSelectionne(false)
-	{ }
+	{
+	    selCouleur.r = corpsCount++ * 10.0 / 255.0;
+    }
 
 	void afficher( )
 	{
 		// la couleur
 		glVertexAttrib4fv( locColor, glm::value_ptr(couleur) );
+		if(modeSelection)
+		    glVertexAttrib4fv( locColor, glm::value_ptr(selCouleur));
 
 		// le corps céleste
 		matrModel.PushMatrix(); {
@@ -112,10 +118,15 @@ class CorpsCeleste
 
 	void avancerPhysique()
 	{
-		rotation += incrRotation;
-		revolution += incrRevolution;
+	    if(!estSelectionne){
+	        rotation += incrRotation;
+            revolution += incrRevolution;
+	    }
+
 	}
 };
+
+int CorpsCeleste::corpsCount = 0;
 
 CorpsCeleste Soleil(   2.00,  0.0,  5.0,  0.0, 0.05, 0.0,  glm::vec4(1.0, 1.0, 0.0, 0.5) );
 
@@ -206,6 +217,19 @@ void chargerNuanceurs()
 			ProgNuanceur::afficherLogCompile( nuanceurObj );
 			delete [] chainesSommets;
 		}
+
+		// attacher le nuanceur de geometrie
+        const GLchar *chainesGeometrie = ProgNuanceur::lireNuanceur( "nuanceurGeometrie.glsl" );
+        if ( chainesGeometrie != NULL )
+        {
+            GLuint nuanceurObj = glCreateShader( GL_GEOMETRY_SHADER );
+            glShaderSource( nuanceurObj, 1, &chainesGeometrie, NULL );
+            glCompileShader( nuanceurObj );
+            glAttachShader( prog, nuanceurObj );
+            ProgNuanceur::afficherLogCompile( nuanceurObj );
+            delete [] chainesGeometrie;
+        }
+
 		// attacher le nuanceur de fragments
 		const GLchar *chainesFragments = ProgNuanceur::lireNuanceur( "nuanceurFragments.glsl" );
 		if ( chainesFragments != NULL )
@@ -317,20 +341,20 @@ void definirCamera()
 
 void afficherQuad( GLfloat alpha ) // le plan qui ferme les solides
 {
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glVertexAttrib4f( locColor, 1.0, 1.0, 1.0, alpha );
-	// afficher le plan tourné selon l'angle courant et à la position courante
-	// partie 1: modifs ici ...
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glVertexAttrib4f( locColor, 1.0, 1.0, 1.0, alpha );
+    // afficher le plan tourné selon l'angle courant et à la position courante
+    // partie 1: modifs ici ...
 
-	matrModel.PushMatrix();{
-		matrModel.Rotate(angleCoupe, 0.0, 1.0, 0.0);
-		matrModel.Translate(0.0, 0.0, -planCoupe.w);
-		glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
-		glBindVertexArray( vao );
-		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-		glBindVertexArray(0);
-	}matrModel.PopMatrix();
+    matrModel.PushMatrix();{
+        matrModel.Rotate(angleCoupe, 0.0, 1.0, 0.0);
+        matrModel.Translate(0.0, 0.0, -planCoupe.w);
+        glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
+        glBindVertexArray( vao );
+        glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+        glBindVertexArray(0);
+    }matrModel.PopMatrix();
 }
 
 void afficherModele()
@@ -410,6 +434,16 @@ void afficherModele()
 	glDepthMask( GL_TRUE );
 }
 
+bool compareColor(GLubyte *couleur, glm::vec4 couleurObj){
+    //if((int)couleur[0] == (int) (couleurObj[0]*255) && (int)couleur[1] == (int) (couleurObj[1]*255) && (int)couleur[2] == (int) (couleurObj[2]*255)){
+    if((int)couleur[0] == (int) (couleurObj[0]*255)){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 void FenetreTP::afficherScene( )
 {
 	// effacer l'ecran et le tampon de profondeur et le stencil
@@ -447,6 +481,27 @@ void FenetreTP::afficherScene( )
 
 	glStencilOp(GL_ZERO, GL_INCR, GL_INCR );
 	afficherModele();
+
+	//glDisable( GL_STENCIL_TEST );
+	glDisable(GL_CLIP_PLANE0);
+
+	glStencilFunc(GL_EQUAL, 1, 1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_ZERO);
+//    if(!modeSelection)
+//    {
+        afficherQuad( 1 );
+//    }
+    glDisable( GL_STENCIL_TEST );
+
+    // en plus, dessiner le plan en transparence pour bien voir son étendue
+
+//    if(!modeSelection)
+//    {
+        afficherQuad( 0.25 );
+//	}
+
+	if ( !modeSelection ) { glDisable( GL_BLEND ); glDepthMask( GL_TRUE ); }
+
 	if ( modeSelection )
 	{
 		// s'assurer que toutes les opérations sont terminées
@@ -454,7 +509,7 @@ void FenetreTP::afficherScene( )
 
 		// obtenir la clôture et calculer la position demandée
 		GLint cloture[4]; glGetIntegerv( GL_VIEWPORT, cloture );
-		GLint posX = dernierX, posY = cloture[3]-dernierY;
+		GLint posX = dernierX, posY = 2*cloture[3]-dernierY;
 
 		// dire de lire le tampon arrière où l'on vient tout juste de dessiner
 		glReadBuffer( GL_BACK );
@@ -469,41 +524,56 @@ void FenetreTP::afficherScene( )
 		glReadPixels( posX, posY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &profondeur );
 		std::cout << "profondeur = " << profondeur << std::endl;
 
-		// la couleur lu indique l'objet sélectionné
-//		if(couleur = Soleil.couleur){
-//			std::cout << "soleil sélectionné"<< std::endl;
-//		}
-//		if(couleur = Terre.couleur){
-//			std::cout << "Terre sélectionné"<< std::endl;
-//		}
-//		else{
-//			std::cout << "Aucun objet sélectionné"<< std::endl;
-//
-//		}
-		//	}
-		//		 if ( couleur[1] != 0 )
-		//			 std::cout << "\tobjet = CUBE " << couleur[1] / 50 << std::endl;
-		//		 else if ( couleur[0] != 0 )
-		//			 std::cout << "\tobjet = SPHERE " << couleur[0] / 50 << std::endl;
+
+        std::cout << (int) (Terre.couleur[0]*255) << std::endl;
+		//la couleur lu indique l'objet sélectionné
+		if(compareColor(couleur, Terre.selCouleur)){
+		    Terre.estSelectionne = !Terre.estSelectionne;
+			std::cout << "Terre sélectionné" << std::endl;
+		}
+		else if(compareColor(couleur, Lune.selCouleur)){
+            Lune.estSelectionne = !Lune.estSelectionne;
+            std::cout << "Lune sélectionné"<< std::endl;
+        }
+        else if(compareColor(couleur, Mars.selCouleur)){
+            Mars.estSelectionne = !Mars.estSelectionne;
+            std::cout << "Mars sélectionné"<< std::endl;
+        }
+        else if(compareColor(couleur, Phobos.selCouleur)){
+            Phobos.estSelectionne = !Phobos.estSelectionne;
+            std::cout << "Phobos sélectionné"<< std::endl;
+        }
+        else if(compareColor(couleur, Deimos.selCouleur)){
+            Deimos.estSelectionne = !Deimos.estSelectionne;
+            std::cout << "Deimos sélectionné"<< std::endl;
+        }
+        else if(compareColor(couleur, Jupiter.selCouleur)){
+            Jupiter.estSelectionne = !Jupiter.estSelectionne;
+            std::cout << "Jupiter sélectionné"<< std::endl;
+        }
+        else if(compareColor(couleur, Europa.selCouleur)){
+            Europa.estSelectionne = !Europa.estSelectionne;
+            std::cout << "Europa sélectionné"<< std::endl;
+        }
+        else if(compareColor(couleur, Callisto.selCouleur)){
+            Callisto.estSelectionne = !Callisto.estSelectionne;
+            std::cout << "Callisto sélectionné"<< std::endl;
+        }
+		else{
+			std::cout << "Aucun objet sélectionné"<< std::endl;
+		}
 	}
-	//glDisable( GL_STENCIL_TEST );
-	glDisable(GL_CLIP_PLANE0);
-
-	glStencilFunc(GL_EQUAL, 1, 1);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_ZERO);
-
-	afficherQuad( 1 );
-	glDisable( GL_STENCIL_TEST );
-
-	// en plus, dessiner le plan en transparence pour bien voir son étendue
-
-
-	afficherQuad( 0.25 );
 }
 
 void FenetreTP::redimensionner( GLsizei w, GLsizei h )
 {
-	glViewport( 0, 0, w, h );
+    GLfloat W = w, H2 = 0.5*h;
+    GLfloat v[]  = {
+        0, 0,  W, H2,
+        0, H2, W, H2,
+    };
+    glViewportArrayv( 0, 2, v );
+//	glViewport( 0, 0, w, h );
 }
 
 void FenetreTP::clavier( TP_touche touche )
@@ -600,7 +670,9 @@ void FenetreTP::sourisClic( int button, int state, int x, int y )
 				modeSelection = false;
 				break;
 			case TP_BOUTON_DROIT: // Sélectionner des objets
-				modeSelection = true;
+			    GLint cloture[4]; glGetIntegerv( GL_VIEWPORT, cloture );
+			    if(y < cloture[3])
+				    modeSelection = true;
 				break;
 		}
 		dernierX = x;
@@ -651,10 +723,16 @@ int main( int argc, char *argv[] )
 	{
 		// mettre à jour la physique
 		calculerPhysique( );
+        // affichage
+        fenetre.afficherScene();
+        if(modeSelection){
+            modeSelection = pressed = false;
+        }else{
+            fenetre.swap();
+        }
+//        fenetre.afficherScene();
+//        fenetre.swap();
 
-		// affichage
-		fenetre.afficherScene();
-		fenetre.swap();
 
 		// récupérer les événements et appeler la fonction de rappel
 		boucler = fenetre.gererEvenement();

@@ -7,25 +7,27 @@ uniform mat4 matrModel;
 uniform mat4 matrVisu;
 uniform mat4 matrProj;
 
-uniform vec4 planCoupe; // équation du plan de coupe
+//uniform vec4 planCoupe; // équation du plan de coupe
 
 layout(location=0) in vec4 Vertex;
 layout(location=3) in vec4 Color;
 
 out Attribs {
    vec4 couleur;
+   vec4 pos;
    // float clipDistance;
 } AttribsOut;
 
 void main( void )
 {
-   // transformation standard du sommet
-   gl_Position = matrProj * matrVisu * matrModel * Vertex;
+    // transformation standard du sommet
+    gl_Position = matrProj * matrVisu * matrModel * Vertex;
 
-   // Initialiser gl_ClipDistance
-   vec4 pos = matrModel * Vertex;
-   gl_ClipDistance[0] = dot(planCoupe, pos);
+    // Initialiser gl_ClipDistance
+    vec4 pos = matrModel * Vertex;
+    //gl_ClipDistance[0] = dot(planCoupe, pos);
 
-   // couleur du sommet
-   AttribsOut.couleur = Color;
+    // couleur du sommet
+    AttribsOut.couleur = Color;
+    AttribsOut.pos = pos;
 }
