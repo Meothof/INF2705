@@ -39,6 +39,9 @@ void main()
 	{
 		gl_Position = gl_in[i].gl_Position;
 		AttribsOut.couleur = AttribsIn[i].couleur;
+		AttribsOut.lumiDir = AttribsIn[i].lumiDir;
+		AttribsOut.normale = AttribsIn[i].normale;
+		AttribsOut.obsVec = AttribsIn[i].obsVec;
 		EmitVertex();
 	}
 }

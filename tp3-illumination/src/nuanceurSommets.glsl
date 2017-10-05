@@ -59,9 +59,9 @@ layout(location=3) in vec4 Color;
 layout(location=8) in vec4 TexCoord;
 
 out Attribs {
+	vec4 couleur;
 	vec3 lumiDir;
 	vec3 normale, obsVec;
-	vec4 couleur;
 } AttribsOut;
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
@@ -75,11 +75,13 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 	// produit scalaire pour le calcul de la réflexion diffuse
 	float NdotL = max( 0.0, dot( N, L ) );
 
+    coul += FrontMaterial.diffuse * LightSource[0].diffuse * NdotL;
 	// calcul de la composante spéculaire (selon Phong ou Blinn)
+	float NdotHV;
 	if(utiliseBlinn){
-		float NdotHV = max( 0.0, dot( normalize( L + O ), N ) ); // avec H et N
+		NdotHV = max( 0.0, dot( normalize( L + O ), N ) ); // avec H et N
 	}else{
-		float NdotHV = max( 0.0, dot( reflect( -L, N ), O ) ); // avec R et O
+		NdotHV = max( 0.0, dot( reflect( -L, N ), O ) ); // avec R et O
 	}
 	// calcul de la composante spéculaire de la 1e source de lumière
 	coul += FrontMaterial.specular * LightSource[0].specular *pow( NdotHV, FrontMaterial.shininess );
@@ -93,32 +95,29 @@ void main( void )
 	// transformation standard du sommet
 	gl_Position = matrProj * matrVisu * matrModel * Vertex;
 
-
-
 	//calculer la normale qui sera interpollé pour la nuanceur de fragment
-	vec3 N = matrNormale * Normal;
+	vec3 N = normalize(matrNormale * Normal);
 
 	// calculer la position du sommet (dans le repère de la camèra)
 	vec3 pos = vec3( matrVisu * matrModel * Vertex );
 
 	// vecteur de la direction de la lumière (dans le repère de la caméra)
-	vec3 L = vec3( ( matrVisu * LightSource[0].position ).xyz - pos );
+	vec3 L = normalize(vec3( ( matrVisu * LightSource[0].position ).xyz - pos ));
 
 	// vecteur de la direction vers l'observateur
-	vec3 O = ( LightModel.localViewer ?
+	vec3 O = normalize(( LightModel.localViewer ?
 				 normalize(-pos) :        // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-Ã -dire vers la caméra
-				 vec3( 0.0, 0.0, 1.0 ) ); // on considère que l'observateur (la caméra) est Ã  l'infini dans la direction (0,0,1)
+				 vec3( 0.0, 0.0, 1.0 ) )); // on considère que l'observateur (la caméra) est Ã  l'infini dans la direction (0,0,1)
 
 	AttribsOut.lumiDir = L;
 	AttribsOut.normale = N;
 	AttribsOut.obsVec = O;
 	// couleur du sommet
-	if(typeIllumination = 1){
+	if(typeIllumination == 1){
 		//L'illumination de type Gouraud s'effectue directement dans le nuanceur de sommet
 		AttribsOut.couleur = calculerReflexion(L,N,O);
 	}else{
 		AttribsOut.couleur = Color;
 	}
-	
 }
 
