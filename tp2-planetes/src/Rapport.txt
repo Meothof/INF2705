@@ -9,6 +9,8 @@ Q1: Dans le nuanceur de sommets, si on souhaite calculer la profondeur du
 	l'axe y de bas en haut. L'axe z est donc orienté vers la caméra, les
 	profondeurs positives sont donc représentées derrière la caméra.
 	Les objets vus dans la scène ont une profondeur négative.
+	Il faut donc inverser le signe du résultat calculé pour 
+	avoir la profondeur du sommet dans le repère de la caméra.
 
 
 Q2: Lorsqu'on calcule la distance à la caméra pour faire un effet de
