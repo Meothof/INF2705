@@ -34,13 +34,29 @@ out Attribs {
 
 void main()
 {
+    vec3 normaleLambert;
+    if(typeIllumination == 0)
+    {
+        vec3 prodVect = vec3(0.0, 0.0 , 0.0);
+        for ( int i = 0 ; i < gl_in.length() ; i++ )
+    	{
+            prodVect += cross(gl_in[(i+1)%3].gl_Position.xyz - gl_in[i].gl_Position.xyz,
+                gl_in[(i+2)%3].gl_Position.xyz - gl_in[i].gl_Position.xyz);
+        }
+        prodVect.xy *= -1;
+        normaleLambert = normalize(prodVect);
+    }
+
 	// émettre les sommets
 	for ( int i = 0 ; i < gl_in.length() ; ++i )
 	{
 		gl_Position = gl_in[i].gl_Position;
 		AttribsOut.couleur = AttribsIn[i].couleur;
 		AttribsOut.lumiDir = AttribsIn[i].lumiDir;
-		AttribsOut.normale = AttribsIn[i].normale;
+		if(typeIllumination == 0)
+		    AttribsOut.normale = normaleLambert;
+		else
+		    AttribsOut.normale = AttribsIn[i].normale;
 		AttribsOut.obsVec = AttribsIn[i].obsVec;
 		EmitVertex();
 	}
