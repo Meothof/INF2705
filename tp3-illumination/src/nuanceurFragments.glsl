@@ -52,6 +52,8 @@ uniform sampler2D laTexture;
 
 in Attribs {
    vec4 couleur;
+	vec3 lumiDir;
+	vec3 normale, obsVec;
 } AttribsIn;
 
 out vec4 FragColor;
@@ -71,8 +73,8 @@ void main( void )
    // ...
 
    // assigner la couleur finale
-   //FragColor = AttribsIn.couleur;
-   FragColor = vec4( 0.5, 0.5, 0.5, 1.0 ); // gris moche!
+   FragColor = AttribsIn.couleur;
+//   FragColor = vec4( 0.5, 0.5, 0.5, 1.0 ); // gris moche!
 
    //if ( afficheNormales ) FragColor = vec4(N,1.0);
 }
