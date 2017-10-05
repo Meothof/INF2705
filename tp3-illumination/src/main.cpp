@@ -399,10 +399,10 @@ void initialiser()
 	glVertexAttribPointer( locVertex, 3, GL_FLOAT, GL_FALSE, 0, 0 );
 	glEnableVertexAttribArray(locVertex);
 	// (partie 1) charger le VBO pour les normales
-		glBindBuffer( GL_ARRAY_BUFFER, vbo[1] );
-		glBufferData( GL_ARRAY_BUFFER, sizeof(normales), normales, GL_STATIC_DRAW );
-		glVertexAttribPointer( locVertex, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-		glEnableVertexAttribArray(locVertex);
+	glBindBuffer( GL_ARRAY_BUFFER, vbo[1] );
+	glBufferData( GL_ARRAY_BUFFER, sizeof(normales), normales, GL_STATIC_DRAW );
+	glVertexAttribPointer( locNormal, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+	glEnableVertexAttribArray(locNormal);
 
 	// (partie 3) charger le VBO pour les coordonnées de texture
 	// ...
