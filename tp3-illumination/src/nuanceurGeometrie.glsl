@@ -44,6 +44,7 @@ void main()
                 gl_in[(i+2)%3].gl_Position.xyz - gl_in[i].gl_Position.xyz);
         }
         prodVect.xy *= -1;
+
         normaleLambert = normalize(prodVect);
     }
 
