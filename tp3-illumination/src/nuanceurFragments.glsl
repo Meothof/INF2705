@@ -60,7 +60,21 @@ out vec4 FragColor;
 
 float calculerSpot( in vec3 spotDir, in vec3 L )
 {
-   return( 0.0 );
+    float cosGamma = dot(spotDir, L);
+    float cosDelta = cos(radians(LightSource[0].spotCutoff));
+
+    float fact = 0;
+
+    if(utiliseDirect)
+    {
+        fact = smoothstep(pow(cosDelta, 1.01+LightSource[0].spotExponent), cosDelta, cosGamma);
+    }
+    else if(acos(cosGamma) < acos(cosDelta))
+    {
+       fact = pow(cosGamma, LightSource[0].spotExponent);
+    }
+
+    return fact;
 }
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
@@ -94,11 +108,18 @@ vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 
 void main( void )
 {
-   // assigner la couleur finale
-   FragColor = AttribsIn.couleur;
+    // assigner la couleur finale
+    FragColor = AttribsIn.couleur;
 
-   if(typeIllumination != 1)
-    FragColor = calculerReflexion(AttribsIn.lumiDir, AttribsIn.normale, AttribsIn.obsVec);
+    vec3 L = normalize(AttribsIn.lumiDir);
+    vec3 N = normalize(AttribsIn.normale);
+    //vec3 O = normalize(AttribsIn.obsVec);
 
-   if ( afficheNormales ) FragColor = vec4(AttribsIn.normale,1.0);
+    if(typeIllumination != 1)
+        FragColor = calculerReflexion(L, N, AttribsIn.obsVec);
+
+    float factSpot = calculerSpot(-normalize( LightSource[0].spotDirection), L);
+    FragColor *= factSpot;
+
+    if ( afficheNormales ) FragColor = vec4(AttribsIn.normale,1.0);
 }

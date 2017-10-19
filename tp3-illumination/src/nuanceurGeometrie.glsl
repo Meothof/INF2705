@@ -42,9 +42,11 @@ void main()
     	{
             prodVect += cross(gl_in[(i+1)%3].gl_Position.xyz - gl_in[i].gl_Position.xyz,
                 gl_in[(i+2)%3].gl_Position.xyz - gl_in[i].gl_Position.xyz);
+            prodVect += AttribsIn[i].normale;
         }
         prodVect.xy *= -1;
-
+//prodVect += cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz,
+//                gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz);
         normaleLambert = normalize(prodVect);
     }
 

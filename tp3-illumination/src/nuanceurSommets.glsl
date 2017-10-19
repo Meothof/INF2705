@@ -96,22 +96,27 @@ void main( void )
 	gl_Position = matrProj * matrVisu * matrModel * Vertex;
 
 	//calculer la normale qui sera interpollé pour la nuanceur de fragment
-	vec3 N = normalize(matrNormale * Normal);
+	vec3 N = (matrNormale * Normal);
 
 	// calculer la position du sommet (dans le repère de la camèra)
 	vec3 pos = vec3( matrVisu * matrModel * Vertex );
 
 	// vecteur de la direction de la lumière (dans le repère de la caméra)
-	vec3 L = normalize(vec3( ( matrVisu * LightSource[0].position ).xyz - pos ));
+	vec3 L = (vec3( ( matrVisu * LightSource[0].position ).xyz - pos ));
 
 	// vecteur de la direction vers l'observateur
 	vec3 O = normalize(( LightModel.localViewer ?
 				 normalize(-pos) :        // =(0-pos) un vecteur qui pointe vers le (0,0,0), c'est-Ã -dire vers la caméra
 				 vec3( 0.0, 0.0, 1.0 ) )); // on considère que l'observateur (la caméra) est Ã  l'infini dans la direction (0,0,1)
 
+
 	AttribsOut.lumiDir = L;
 	AttribsOut.normale = N;
 	AttribsOut.obsVec = O;
+
+	N = normalize(N);
+	L = normalize(L);
+
 	// couleur du sommet
 	if(typeIllumination == 1){
 		//L'illumination de type Gouraud s'effectue directement dans le nuanceur de sommet
