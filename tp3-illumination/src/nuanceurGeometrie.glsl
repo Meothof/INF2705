@@ -24,12 +24,14 @@ in Attribs {
 	vec4 couleur;
 	vec3 lumiDir;
 	vec3 normale, obsVec;
+	vec2 texCoord;
 } AttribsIn[];
 
 out Attribs {
 	vec4 couleur;
 	vec3 lumiDir;
 	vec3 normale, obsVec;
+	vec2 texCoord;
 } AttribsOut;
 
 void main()
@@ -56,6 +58,7 @@ void main()
 		gl_Position = gl_in[i].gl_Position;
 		AttribsOut.couleur = AttribsIn[i].couleur;
 		AttribsOut.lumiDir = AttribsIn[i].lumiDir;
+		AttribsOut.texCoord = AttribsIn[i].texCoord;
 		if(typeIllumination == 0)
 		    AttribsOut.normale = normaleLambert;
 		else

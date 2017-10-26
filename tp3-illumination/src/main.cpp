@@ -1,7 +1,7 @@
 // Prénoms, noms et matricule des membres de l'équipe:
-// - Prénom1 NOM1 (matricule1)
-// - Prénom2 NOM2 (matricule2)
-#warning "Écrire les prénoms, noms et matricule des membres de l'équipe dans le fichier et commenter cette ligne"
+// - Théo MOFFELEIN (1918945)
+// - Thibault NOILLY (1919676)
+// #warning "Écrire les prénoms, noms et matricule des membres de l'équipe dans le fichier et commenter cette ligne"
 
 #include <stdlib.h>
 #include <iostream>
@@ -386,6 +386,25 @@ void initialiser()
 		-1.0, 0.0, 0.0,    -1.0, 0.0, 0.0,    -1.0, 0.0, 0.0,    -1.0, 0.0, 0.0,
 		0.0, 0.0, 1.0,	   0.0, 0.0, 1.0,	   0.0, 0.0, 1.0,	   0.0, 0.0, 1.0
 	};
+	GLfloat texcooDE[2*4*6] =
+	{
+	    1.0/3.0, 1.0/3.0,   1.0/3.0, 2.0/3.0,   2.0/3.0, 1.0/3.0,    2.0/3.0, 2.0/3.0, // face 1
+	    0.0, 1.0/3.0,       0.0, 2.0/3.0,       1.0/3.0, 1.0/3.0,    1.0/3.0, 2.0/3.0, // face 2
+	    1.0/3.0, 0.0,       1.0/3.0, 1.0/3.0,   2.0/3.0, 0.0,        2.0/3.0, 1.0/3.0, // face 3
+	    2.0/3.0, 1.0/3.0,   2.0/3.0, 2.0/3.0,   1.0, 1.0/3.0,        1.0, 2.0/3.0, // face 5
+	    1.0/3.0, 2.0/3.0,   1.0/3.0, 1.0,       2.0/3.0, 2.0/3.0,    2.0/3.0, 1.0, // face 4
+	    2.0/3.0, 0.0,       2.0/3.0, 1.0/3.0,   1.0,0.0,             1.0, 1.0/3.0 // face 6
+	};
+
+	GLfloat texcooECH[2*4*6] =
+    {
+        0.0, 0.0,    3.0, 0.0,    0.0, 3.0,    3.0, 3.0,
+        0.0, 0.0,    3.0, 0.0,    0.0, 3.0,    3.0, 3.0,
+        0.0, 0.0,    3.0, 0.0,    0.0, 3.0,    3.0, 3.0,
+        0.0, 0.0,    3.0, 0.0,    0.0, 3.0,    3.0, 3.0,
+        0.0, 0.0,    3.0, 0.0,    0.0, 3.0,    3.0, 3.0,
+        0.0, 0.0,    3.0, 0.0,    0.0, 3.0,    3.0, 3.0
+    };
 
 	// allouer les objets OpenGL
 	glGenVertexArrays( 2, vao );
@@ -405,7 +424,15 @@ void initialiser()
 	glEnableVertexAttribArray(locNormal);
 
 	// (partie 3) charger le VBO pour les coordonnées de texture
-	// ...
+    glBindBuffer( GL_ARRAY_BUFFER, vbo[2] );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(texcooDE), texcooDE, GL_STATIC_DRAW );
+    glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+    glEnableVertexAttribArray( locTexCoord );
+
+    glBindBuffer( GL_ARRAY_BUFFER, vbo[3] );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(texcooECH), texcooECH, GL_STATIC_DRAW );
+    glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+    glEnableVertexAttribArray( locTexCoord );
 
 	glBindVertexArray(0);
 
@@ -448,12 +475,15 @@ void afficherModele()
 	{
 		default:
 			//std::cout << "Sans texture" << std::endl;
+			glBindTexture( GL_TEXTURE_2D, 0);
 			break;
 		case 1:
 			//std::cout << "Texture DE" << std::endl;
+			glBindTexture( GL_TEXTURE_2D, textureDE);
 			break;
 		case 2:
 			//std::cout << "Texture ECHIQUIER" << std::endl;
+			glBindTexture( GL_TEXTURE_2D, textureECHIQUIER);
 			break;
 	}
 
@@ -478,6 +508,16 @@ void afficherModele()
 			case 1:
 				// afficher le cube
 				glBindVertexArray( vao[0] );
+				if( varsUnif.texnumero == 1 )
+				{
+				    glBindBuffer( GL_ARRAY_BUFFER, vbo[2] );
+                    glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+				}
+				else if (varsUnif.texnumero == 2 )
+				{
+				    glBindBuffer( GL_ARRAY_BUFFER, vbo[3] );
+                    glVertexAttribPointer( locTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+				}
 				glDrawArrays( GL_TRIANGLE_STRIP,  0, 4 );
 				glDrawArrays( GL_TRIANGLE_STRIP,  4, 4 );
 				glDrawArrays( GL_TRIANGLE_STRIP,  8, 4 );
@@ -625,7 +665,7 @@ void FenetreTP::afficherScene()
 	glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
 	glUniformMatrix4fv( locmatrVisu, 1, GL_FALSE, matrVisu );
 	glUniformMatrix4fv( locmatrModel, 1, GL_FALSE, matrModel );
-	//glActiveTexture( GL_TEXTURE0 ); // activer la texture '0' (valeur de défaut)
+	glActiveTexture( GL_TEXTURE0 ); // activer la texture '0' (valeur de défaut)
 	glUniform1i( loclaTexture, 0 ); // '0' => utilisation de GL_TEXTURE0
 
 	afficherModele();
@@ -773,10 +813,10 @@ void FenetreTP::clavier( TP_touche touche )
 			std::cout << " varsUnif.texnumero=" << varsUnif.texnumero << std::endl;
 			break;
 
-			// case TP_c: // Changer l'affichage de l'objet texturé avec couleurs ou sans couleur
-			//    varsUnif.utiliseCouleur = !varsUnif.utiliseCouleur;
-			//    std::cout << " utiliseCouleur=" << varsUnif.utiliseCouleur << std::endl;
-			//    break;
+        case TP_c: // Changer l'affichage de l'objet texturé avec couleurs ou sans couleur
+            varsUnif.utiliseCouleur = !varsUnif.utiliseCouleur;
+            std::cout << " utiliseCouleur=" << varsUnif.utiliseCouleur << std::endl;
+            break;
 
 		case TP_o: // Changer l'affichage des texels noirs (noir, mi-coloré, transparent)
 			varsUnif.afficheTexelNoir++;

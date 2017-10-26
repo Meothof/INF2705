@@ -62,6 +62,7 @@ out Attribs {
 	vec4 couleur;
 	vec3 lumiDir;
 	vec3 normale, obsVec;
+	vec2 texCoord;
 } AttribsOut;
 
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
@@ -113,6 +114,8 @@ void main( void )
 	AttribsOut.lumiDir = L;
 	AttribsOut.normale = N;
 	AttribsOut.obsVec = O;
+
+	AttribsOut.texCoord = TexCoord.st;
 
 	N = normalize(N);
 	L = normalize(L);

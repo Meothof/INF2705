@@ -54,6 +54,7 @@ in Attribs {
    vec4 couleur;
 	vec3 lumiDir;
 	vec3 normale, obsVec;
+	vec2 texCoord;
 } AttribsIn;
 
 out vec4 FragColor;
@@ -80,7 +81,8 @@ float calculerSpot( in vec3 spotDir, in vec3 L )
 vec4 calculerReflexion( in vec3 L, in vec3 N, in vec3 O )
 {
 	// ajout de l’émission et du terme ambiant du modèle d’illumination
-	vec4 coul = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
+	vec4 coul;
+    coul = FrontMaterial.emission + FrontMaterial.ambient * LightModel.ambient;
 
 	// calcul de la composante ambiante de la 1e source de lumière
 	coul += FrontMaterial.ambient * LightSource[0].ambient;
@@ -120,6 +122,50 @@ void main( void )
 
     float factSpot = calculerSpot(-normalize( LightSource[0].spotDirection), L);
     FragColor *= factSpot;
+
+    float seuilTex = 0.1;
+
+    if( texnumero != 0 )
+    {
+        if(utiliseCouleur)
+        {
+            if( afficheTexelNoir == 0 )
+                FragColor *= texture(laTexture, AttribsIn.texCoord);
+            else
+            {
+                if( texture(laTexture, AttribsIn.texCoord).r <= seuilTex &&
+                    texture(laTexture, AttribsIn.texCoord).g <= seuilTex &&
+                    texture(laTexture, AttribsIn.texCoord).b <= seuilTex)
+                    discard;
+                else
+                    FragColor *= texture(laTexture, AttribsIn.texCoord);
+            }
+        }
+        else
+        {
+            if( afficheTexelNoir != 2 )
+                FragColor = texture(laTexture, AttribsIn.texCoord);
+            else if( afficheTexelNoir == 1)
+            {
+                if( texture(laTexture, AttribsIn.texCoord).r <= seuilTex &&
+                    texture(laTexture, AttribsIn.texCoord).g <= seuilTex &&
+                    texture(laTexture, AttribsIn.texCoord).b <= seuilTex)
+                    FragColor = 0.5 * (FragColor + texture(laTexture, AttribsIn.texCoord));
+                else
+                    FragColor *= texture(laTexture, AttribsIn.texCoord);
+            }
+            else
+            {
+
+                if( texture(laTexture, AttribsIn.texCoord).r <= seuilTex &&
+                    texture(laTexture, AttribsIn.texCoord).g <= seuilTex &&
+                    texture(laTexture, AttribsIn.texCoord).b <= seuilTex)
+                    discard;
+                else
+                    FragColor = texture(laTexture, AttribsIn.texCoord);
+            }
+        }
+    }
 
     if ( afficheNormales ) FragColor = vec4(AttribsIn.normale,1.0);
 }
