@@ -13,6 +13,7 @@
     u:  Décrémenter le coefficient de brillance
     m:  Choisir le modèle affiché: cube, tore, sphère, théière, cube, cylindre, cône
     t:  Choisir la texture utilisée: aucune, dé, échiquier
+    c:  Changer l'affichage de l'objet texturé avec couleurs ou sans couleur
     o:  Changer l'affichage des texels noirs (noir, mi-coloré, transparent)
     g:  Permuter l'affichage en fil de fer ou plein
     n:  Utiliser ou non les normales calculées comme couleur (pour le débogage)
