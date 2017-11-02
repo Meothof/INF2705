@@ -527,7 +527,7 @@ void afficherModele()
 				glBindVertexArray( 0 );
 				break;
 			case 2:
-				tore->afficher(); 
+				tore->afficher();
 				break;
 			case 3:
 				sphere->afficher();
@@ -813,10 +813,10 @@ void FenetreTP::clavier( TP_touche touche )
 			std::cout << " varsUnif.texnumero=" << varsUnif.texnumero << std::endl;
 			break;
 
-        case TP_c: // Changer l'affichage de l'objet texturé avec couleurs ou sans couleur
-            varsUnif.utiliseCouleur = !varsUnif.utiliseCouleur;
-            std::cout << " utiliseCouleur=" << varsUnif.utiliseCouleur << std::endl;
-            break;
+    case TP_c: // Changer l'affichage de l'objet texturé avec couleurs ou sans couleur
+        varsUnif.utiliseCouleur = !varsUnif.utiliseCouleur;
+        std::cout << " utiliseCouleur=" << varsUnif.utiliseCouleur << std::endl;
+        break;
 
 		case TP_o: // Changer l'affichage des texels noirs (noir, mi-coloré, transparent)
 			varsUnif.afficheTexelNoir++;
