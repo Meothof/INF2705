@@ -58,7 +58,7 @@ void main( void )
       vitesseMod = vitesse;
 
       // diminuer son temps de vie
-      tempsRestantMod -= dt;
+      tempsRestantMod = tempsRestant - dt;
 
       // garder la couleur courante
       couleurMod = couleur;
@@ -76,6 +76,7 @@ void main( void )
       }
       // collision avec le sol ?
       if(posSphUnitaire.z <= 0.0){
+          positionMod.z = - positionMod.z;
           vec3  vitReflechieSphUnitaire = reflect( vitSphUnitaire , vec3(0.0,0.0,1.0) );
           vitesseMod = vitReflechieSphUnitaire / bDim;
       }
