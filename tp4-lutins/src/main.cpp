@@ -390,10 +390,10 @@ void initialiser()
    glVertexAttribPointer( locvitesse, 3, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,vitesse) ) );
    glEnableVertexAttribArray(locvitesse);
    glBindVertexArray( 0 );
-   std::cout << locVertex << std::endl;
-   std::cout << locColor << std::endl;
-   std::cout << loctempsRestant << std::endl;
-   std::cout << locvitesse << std::endl;
+//   std::cout << locVertex << std::endl;
+//   std::cout << locColor << std::endl;
+//   std::cout << loctempsRestant << std::endl;
+//   std::cout << locvitesse << std::endl;
    FenetreTP::VerifierErreurGL("après les glVertexAttribPointer de vao[0]");
 
    // remplir les VBO pour les valeurs modifiées
@@ -417,10 +417,10 @@ void initialiser()
    glVertexAttribPointer( locvitesseRetroaction, 3, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,vitesse) ) );
    glEnableVertexAttribArray(locvitesseRetroaction);
    glBindVertexArray( 0 );
-   std::cout << locpositionRetroaction << std::endl;
-   std::cout << loccouleurRetroaction << std::endl;
-   std::cout << loctempsRestantRetroaction << std::endl;
-   std::cout << locvitesseRetroaction << std::endl;
+//   std::cout << locpositionRetroaction << std::endl;
+//   std::cout << loccouleurRetroaction << std::endl;
+//   std::cout << loctempsRestantRetroaction << std::endl;
+//   std::cout << locvitesseRetroaction << std::endl;
    FenetreTP::VerifierErreurGL("après les glVertexAttribPointer de vao[1]");
 
    // Défaire tous les liens
@@ -510,7 +510,7 @@ void FenetreTP::afficherScene()
    glVertexAttribPointer( locVertex, 3, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,position) ) );
    glVertexAttribPointer( loctempsRestant, 1, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,tempsRestant) ) );
    // À MODIFIER (partie 3)
-   //glVertexAttribPointer( locvitesse, 3, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,vitesse) ) );
+   glVertexAttribPointer( locvitesse, 3, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,vitesse) ) );
    glVertexAttribPointer( locColor, 4, GL_FLOAT, GL_FALSE, sizeof(Part), reinterpret_cast<void*>( offsetof(Part,couleur) ) );
 
    switch ( texnumero ) // 0-aucune, 1-étincelle, 2-oiseau, 3-bonhomme
