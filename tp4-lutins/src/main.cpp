@@ -171,8 +171,10 @@ void chargerTextures()
       glBindTexture( GL_TEXTURE_2D, textureETINCELLE );
       glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, largeur, hauteur, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels );
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+//      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+//      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
       glBindTexture( GL_TEXTURE_2D, 0 );
       delete[] pixels;
    }
@@ -250,15 +252,19 @@ void chargerNuanceurs()
          ProgNuanceur::afficherLogCompile( nuanceurObj );
          delete [] chainesSommets;
       }
-      const GLchar *chainesGeometrie = ProgNuanceur::lireNuanceur( "nuanceurGeometrie.glsl" );
-      if ( chainesGeometrie != NULL )
+      // attacher le nuanceur de geometrie
+      const char *preambule = ( texnumero == 0 ?
+                                   "#version 410\n#define NUANCEUR_GEOMETRIE_POINTS\n" :
+                                   "#version 410\n#define NUANCEUR_GEOMETRIE\n" );
+      const GLchar *chainesGeometrie[2] = { preambule, ProgNuanceur::lireNuanceur( "nuanceurGeometrie.glsl" ) };
+      if ( chainesGeometrie[1] != NULL )
       {
          GLuint nuanceurObj = glCreateShader( GL_GEOMETRY_SHADER );
-         glShaderSource( nuanceurObj, 1, &chainesGeometrie, NULL );
+         glShaderSource( nuanceurObj, 2, chainesGeometrie, NULL );
          glCompileShader( nuanceurObj );
          glAttachShader( prog, nuanceurObj );
          ProgNuanceur::afficherLogCompile( nuanceurObj );
-         delete [] chainesGeometrie;
+         delete [] chainesGeometrie[1];
       }
       // attacher le nuanceur de fragments
       const GLchar *chainesFragments = ProgNuanceur::lireNuanceur( "nuanceurFragments.glsl" );
@@ -658,6 +664,8 @@ void FenetreTP::clavier( TP_touche touche )
    case TP_t: // Changer la texture utilisée: 0-aucune, 1-étincelle, 2-oiseau, 3-bonhomme
       if ( ++texnumero > 3 ) texnumero = 0;
       std::cout << " texnumero=" << texnumero << std::endl;
+      chargerNuanceurs();
+      std::cout << "// Recharger nuanceurs" << std::endl;
       break;
 
    case TP_p: // Permuter la projection: perspective ou orthogonale

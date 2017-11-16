@@ -3,12 +3,28 @@ Indice: pour bien répondre à ces deux questions, essayez de voir si votre rép
 
 Q1: Dans la partie 1, des points de taille fixe sont affichés à l'écran. Leur taille est donnée par la variable gl_PointSize.
     i) Comment faire pour que la taille d'un point varie de façon inverse à sa distance du plan avant du volume de visualisation ?
+
+	Il suffit de diviser la taille du point par sa coordonnée en z avant le calcul de la projection, on divise
+	ainsi la taille du point par sa distance au plan avant du volume de visualisation.
+
     ii) Donnez l'énoncé GLSL que vous utiliseriez pour implanter ceci.
+	
+	gl_PointSize = 20.0; // en pixels
+   	gl_PointSize /= (-gl_in[0].gl_Position.z);
+   	gl_Position = (matrProj * gl_in[0].gl_Position);
 
 
 
 Q2: Pour afficher une étincelle qui tourne sur elle-même, on a appliqué une matrice de rotation sur les quatre sommets.
     i) Pourrait-on faire tourner l'étincelle en appliquant la même matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des sommets?
     ii) Quel problème observerions-nous alors et comment devrait-il être corrigé?
+
+	Il est possible d'appliquer la rotation sur la texture. Dans ce cas, les coordonnées de texture
+	obtenues n'appartiennent pas à la texture (le point (1, 1) devient (0, 1.41) par rotation de 45 
+	degrés). La texture va être prolongée si les coordonnées dépassent [0, 1].
+	On peut contourner ce problème en modifiant les paramètres de glTexParameter, et en indiquant un GL_CLAMP_TO_BORDER au lieu d'un GL_CLAMP_TO_EDGE.
+	Cela marche bien avec l'étincelle, parce que l'étincelle ne s'étend pas assez vers les coins de l'image utilisée pour poser problème lors de la rotation.
+
+
 
     Afin de facilement répondre à cette question, vous pouvez remplacer (temporairement!) l'image de l'étincelle de ce TP par l'image de l'échiquier du TP3.  Si vous appliquez ensuite la matrice de rotation sur les coordonnées de texture plutôt que sur les coordonnées des sommets, vous pourrez alors très bien voir ce qui se passe.
