@@ -344,8 +344,13 @@ void initialiser()
    // activer les états openGL
    glEnable( GL_DEPTH_TEST );
    glEnable( GL_PROGRAM_POINT_SIZE );
+
+   //Ajout partie 3
+   glEnable(GL_BLEND);
    glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
    glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+
 
    // Initialisation des particules
    for ( unsigned int i = 0 ; i < MAXNPARTICULES ; i++ )

@@ -48,8 +48,11 @@ void main()
     coins[2] = vec2( 0.5, 0.5 );
     coins[3] = vec2( 0.5, -0.5 );
 
-    if(AttribsIn[0].sens == 0)
-        AttribsOut.couleur = AttribsIn[0].couleur;
+    vec2 coins_reverse[4];
+    coins_reverse[0] = vec2( 0.5, 0.5 );
+    coins_reverse[1] = vec2( 0.5, -0.5 );
+    coins_reverse[2] = vec2( -0.5, 0.5 );
+    coins_reverse[3] = vec2( -0.5, -0.5 );
 
 
     if(texnumero != 0)
@@ -63,10 +66,14 @@ void main()
             AttribsOut.couleur = AttribsIn[0].couleur;
 
             if(texnumero != 1){
-                AttribsOut.texCoord = coins[i] + vec2( 0.5, 0.5 );
+                if(AttribsIn[0].sens == 1){
+                    AttribsOut.texCoord = coins[i] + vec2( 0.5, 0.5 );
+                }
+                else{
+                    AttribsOut.texCoord = coins_reverse[i] + vec2( 0.5, 0.5 );
+                }
                 AttribsOut.texCoord.x *= 1.0 / 16.0;
                 AttribsOut.texCoord.x += int(mod(18.*AttribsIn[0].tempsRestant, 16)) / 16.0;
-
             }
             else{
                 mat3 rot = mat3( cos(6.*AttribsIn[0].tempsRestant), sin(6.*AttribsIn[0].tempsRestant), 0.0,
