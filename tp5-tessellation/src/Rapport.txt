@@ -1,0 +1,18 @@
+Q1: Vous avez probablement remarqué que même en demandant un très grand
+    niveau de tessellation, le générateur de tessellation ne produira pas
+    une tessellation plus fine que le niveau maximum donné par la constante
+    GL_MAX_TESS_GEN_LEVEL.  (On peut obtenir la valeur de cette constante
+    avec glGet() et elle doit être au moins 64.)
+    Que doit-on alors faire si on veut, malgré tout, une tessellation deux
+    fois plus fine dans chaque direction?
+
+
+Q2: Vous avez probablement remarqué que la sphère a une région qui apparaît
+    noire au pôle Nord. Pourtant, l'équation paramétrique utilisée dans la
+    FctParam() est bien celle d'une sphère, tous les triangles sont bien
+    créés pour fermer la sphère, il n'y pas de « trou » et ce sont seulement
+    les triangles touchant au pôle qui s'affichent en noir.
+    i) Quelle est la cause de ce problème qui apparaît dans cette région et,
+    surtout, ii) de façon générale (et pas seulement dans le cas de cette sphère),
+    quelle serait votre solution pour corriger ce problème ?
+
