@@ -1,7 +1,7 @@
 // Prénoms, noms et matricule des membres de l'équipe:
-// - Prénom1 NOM1 
-// - Prénom2 NOM2 
-#warning "Écrire les prénoms, noms et matricule des membres de l'équipe ci-dessus et commenter cette ligne"
+// - Théo Moffelein 1918945
+// - Thibault Noilly 1919676
+//#warning "Écrire les prénoms, noms et matricule des membres de l'équipe ci-dessus et commenter cette ligne"
 
 #include <iostream>
 #include "inf2705.h"
@@ -442,8 +442,29 @@ void conclure()
 
 void definirProjection( int OeilMult, int w, int h ) // 0: mono, -1: oeil gauche, +1: oeil droit
 {
-   // partie 2: utiliser plutôt Frustum() pour le stéréo
-   matrProj.Perspective( 35.0, (GLdouble) w / (GLdouble) h, vue.zavant, vue.zarriere );
+    // partie 2: utiliser plutôt Frustum() pour le stéréo
+    switch ( affichageStereo )
+    {
+        case 0: // mono
+           matrProj.Perspective( 35.0, (GLdouble) w / (GLdouble) h, vue.zavant, vue.zarriere );
+           break;
+
+      case 1: // stéréo anaglyphe
+      case 2:
+         GLdouble resolution = 100;
+         GLdouble oeilDecalage = OeilMult * vue.dip/2.0;
+         GLdouble proportionProfondeur = vue.zavant / vue.zecran;
+
+
+         matrProj.Frustum( (-0.5 * w / resolution - oeilDecalage ) * proportionProfondeur,
+                           ( 0.5 * w / resolution - oeilDecalage ) * proportionProfondeur,
+                           (-0.5 * h / resolution                ) * proportionProfondeur,
+                           ( 0.5 * h / resolution                ) * proportionProfondeur,
+                           vue.zavant, vue.zarriere );
+         matrProj.Translate( -oeilDecalage, 0.0, 0.0 );
+         glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+         break;
+    }
 }
 
 void afficherDecoration()
@@ -594,24 +615,51 @@ void FenetreTP::afficherScene()
 
    case 1: // stéréo anaglyphe
       // partie 2: à modifier pour afficher en anaglyphe
-      definirProjection( 0, largeur_, hauteur_ );
-      glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
+      definirProjection( -1, largeur_, hauteur_ );
+      glColorMask( GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE );
       afficherModele();
+      glClear( GL_DEPTH_BUFFER_BIT );
+      definirProjection( +1, largeur_, hauteur_ );
+
+      glColorMask( GL_FALSE, GL_TRUE, GL_TRUE, GL_TRUE );
+      afficherModele();
+
+      glColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
       break;
 
    case 2: // stéréo double
-      // partie 2: à modifier pour afficher en stéréo double
-      definirProjection( 0, largeur_, hauteur_ );
-      glUniformMatrix4fv( locmatrProj, 1, GL_FALSE, matrProj );
-      afficherModele();
-      break;
+        // partie 2: à modifier pour afficher en stéréo double
+
+        //Utilisation de 2 viewports: Un pour l'oeil droit et un pour le gauche
+        glViewport( 0, 0, largeur_/2, hauteur_ );
+        definirProjection( -1, largeur_, hauteur_ );
+        afficherModele();
+        glViewport( largeur_/2, 0, largeur_/2, hauteur_ );
+        definirProjection( +1, largeur_, hauteur_ );
+        afficherModele();
+        break;
    }
 }
 
 // fonction de redimensionnement de la fenêtre graphique
 void FenetreTP::redimensionner( GLsizei w, GLsizei h )
 {
-   glViewport( 0, 0, w, h );
+    switch(affichageStereo)
+    {
+        case 0:
+        case 1:
+            glViewport( 0, 0, w, h );
+            break;
+        case 2:
+            //Initialisation des viewports pour le cas double
+            GLfloat W2 = 0.5*w, H = h;
+            GLfloat v[]  = {
+                0, 0,  W2, H,
+                0, H, W2, H,
+            };
+            glViewportArrayv( 0, 2, v );
+            break;
+    }
 }
 
 void FenetreTP::clavier( TP_touche touche )
@@ -751,6 +799,7 @@ void FenetreTP::clavier( TP_touche touche )
    case TP_s: // Varier le type d'affichage stéréo: mono, stéréo anaglyphe, stéréo double
       if ( ++affichageStereo > 2 ) affichageStereo = 0;
       std::cout << " affichageStereo=" << affichageStereo << std::endl;
+      redimensionner(largeur_, hauteur_);
       break;
 
    case TP_g: // Permuter l'affichage en fil de fer ou plein

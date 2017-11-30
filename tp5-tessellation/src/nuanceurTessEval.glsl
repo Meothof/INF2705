@@ -128,51 +128,52 @@ vec3 FctParam( vec2 uv )
 // déplacement du plan selon la texture
 float FctText( vec2 texCoord )
 {
-   //...
-   return 0.0; // à modifier!
+   float z = 0.0;
+   vec4 texels = texture(textureDepl, texCoord);
+   z = length(texels) * facteurDeform / 10.0;
+   return z; // à modifier!
 }
 
 void main( void )
 {
    const float eps = 0.01;
+   vec2 epsX = vec2(eps, 0.0);
+   vec2 epsY = vec2(0.0, eps);
 
    // interpoler la position selon la tessellation (dans le repère de modélisation)
    vec4 posModel = interpole( gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[2].gl_Position, gl_in[3].gl_Position );
    vec2 uv = posModel.xy;
 
    // générer (en utilisant directement posModel.xy) les coordonnées de texture plutôt que les interpoler
-   //AttribsOut.texCoord = ...;
+   AttribsOut.texCoord = posModel.xy;
 
 #if ( INDICEFONCTION != 0 )
 
    // affichage de la fonction paramétrique (partie 1)
-   // ....xyz = FctParam( ... );
    posModel.xyz = FctParam(uv);
 
    // calculer la normale
-   vec2 epsX = vec2(eps, 0.0);
-   vec2 epsY = vec2(0.0, eps);
-   vec3 N = cross(FctParam(uv + epsY) - FctParam(uv - epsY),
-                  FctParam(uv + epsX) - FctParam(uv - epsX)); // à modifier
+   vec3 N = normalize(cross(FctParam(uv + epsY) - FctParam(uv - epsY),
+                  FctParam(uv + epsX) - FctParam(uv - epsX))); // à modifier
+
+
 
 #else
 
    // déplacement selon la texture (partie 2)
-   // ....z = FctText( ... );
 
-//    posModel.x += bDim.x;
-//    posModel.y += bDim.y;
-    posModel.x -= .5;
-    posModel.y -= .5;
-
+    posModel.xy -= .5;
     posModel.xy *= 2*bDim.xy;
+    AttribsOut.texCoord = posModel.xy;
+    posModel.z = FctText(posModel.xy);
 
+   float x = posModel.x;
+   float y = posModel.y;
    // calculer la normale
-    vec2 epsX = vec2(eps, 0.0);
-    vec2 epsY = vec2(0.0, eps);
-//    vec3 N = cross(FctParam(uv + epsY) - FctParam(uv - epsY),
-//                  FctParam(uv + epsX) - FctParam(uv - epsX)); // à modifier
-    vec3 N = vec3(0,0,-1.0);
+   vec3 N = normalize(vec3((FctText(posModel.xy + epsX) - FctText(posModel.xy - epsX))/(2*eps),
+                 (FctText(posModel.xy + epsY) - FctText(posModel.xy - epsY))/(2*eps),
+                  -1 ));
+
 
 #endif
 

@@ -6,6 +6,9 @@ Q1: Vous avez probablement remarqué que même en demandant un très grand
     Que doit-on alors faire si on veut, malgré tout, une tessellation deux
     fois plus fine dans chaque direction?
 
+	On pourrait multiplier les dimensions de la scène par un facteur d'échelle de 0.5.
+	De cette manière on a une densité de tesselation deux fois plus élevé qu'auparavant.
+
 
 Q2: Vous avez probablement remarqué que la sphère a une région qui apparaît
     noire au pôle Nord. Pourtant, l'équation paramétrique utilisée dans la
@@ -16,3 +19,6 @@ Q2: Vous avez probablement remarqué que la sphère a une région qui apparaît
     surtout, ii) de façon générale (et pas seulement dans le cas de cette sphère),
     quelle serait votre solution pour corriger ce problème ?
 
+	Aux pôles de la sphère, on remarque que la surface est quasiment horizontale, ainsi le
+	produit vectoriel pour calculer la normale en ces régions devrait donner le vecteur nul.
+	On pourrait définir manuellement les valeurs de ces normales en 1 au nord -1 sud dans un certain rayon. 
